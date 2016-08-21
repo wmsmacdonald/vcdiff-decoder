@@ -1,0 +1,26 @@
+{
+  "name": "vcdiff-decoder",
+  "version": "0.1.0",
+  "description": "Pure JavaScript vcdiff decoder that works with binary deltas from Google's open-vcdiff",
+  "main": "lib/vcdiff_decoder.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wmsmacdonald/vcdiff-decoder.git"
+  },
+  "keywords": [
+    "sdch",
+    "delta",
+    "cache",
+    "encoding",
+    "compression"
+  ],
+  "author": "William MacDonald",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/wmsmacdonald/vcdiff-decoder/issues"
+  },
+  "homepage": "https://github.com/wmsmacdonald/vcdiff-decoder#readme"
+}
