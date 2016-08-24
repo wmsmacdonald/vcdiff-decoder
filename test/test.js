@@ -6,11 +6,11 @@ const vcd = require('vcdiff');
 const vcdiffDecoder = require('../');
 
 describe('vcdiff', function() {
-  let source = new Buffer('version number 1');
-  let target = new Buffer('version number 2');
+  let source = new Buffer('test 1');
+  let target = new Buffer('test 2');
   let hashedSource = new vcd.HashedDictionary(source);
   let delta = vcd.vcdiffEncodeSync(target, { hashedDictionary: hashedSource });
-  console.log(delta.toString());
+  //console.log(delta.toString());
 
   describe('#decodeSync', function() {
     it('should return the correct target', function() {
