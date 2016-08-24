@@ -18,7 +18,7 @@ Returns a `Buffer` object of the target.
 
 `delta` is the binary encoding of the information needed to transform the source to the target. It is encoded as vcdiff, as specified in [RFC 3284](https://tools.ietf.org/html/rfc3284)
 
-`source` is the group of bytes to transform into the target. In delta encoding, this probably and old, cached version.
+`source` is the group of bytes to transform into the target. In delta encoding, this probably an old, cached version.
 
 ### vcdiff.decode(delta, source)
 
