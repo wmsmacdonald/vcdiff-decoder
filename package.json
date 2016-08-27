@@ -14,7 +14,7 @@
     "sdch",
     "delta",
     "cache",
-    "encoding",
+    "decoding",
     "compression"
   ],
   "author": "William MacDonald",

@@ -7,19 +7,21 @@ const vcdiffDecoder = require('../');
 const errors = require('../lib/errors');
 const VCDiff = require('../lib/vcdiff');
 const Deserialize = require('../lib/deserialize');
-const vcdiffTargetWindow = require('../lib/vcdiff_target_window');
+const TypedArray = require('../lib/typed_array_util');
 
 describe('vcdiffDecoder', function() {
-  let source = new Buffer('test 1\n');
-  let target = new Buffer('test 2\n');
-  let hashedSource = new vcd.HashedDictionary(source);
-  let delta = vcd.vcdiffEncodeSync(target, { hashedDictionary: hashedSource });
+  let source = 'test 1\n';
+  let target = 'test 2\n';
+  let hashedSource = new vcd.HashedDictionary(new Buffer(source));
+  let delta = new Uint8Array(vcd.vcdiffEncodeSync(new Buffer(target), { hashedDictionary: hashedSource }));
 
   describe('#decodeSync', function() {
     it('should return the correct target', function() {
-      let decodedTarget = vcdiffDecoder.decodeSync(delta, source);
+      let decodedTarget = vcdiffDecoder.decodeSync(delta, new Uint8Array(source));
+      let decodedString = uintToString(decodedTarget);
       // make sure decoded is same as target
-      assert.strictEqual(decodedTarget.toString('ascii'), target.toString());
+      assert.strictEqual(decodedString, target.toString());
+
     });
   });
   /*describe('#decode', function() {
@@ -35,13 +37,13 @@ describe('vcdiffDecoder', function() {
 describe('vcdiff', function() {
   describe('#_consumeHeader', function() {
     it('should move position up to 5', function () {
-      let delta = new Buffer([0x56, 0x43, 0x44, 0x0, 0x0]);
+      let delta = new Uint8Array([0x56, 0x43, 0x44, 0x0, 0x0]);
       let vcdiff = new VCDiff(delta);
       vcdiff._consumeHeader();
       assert.strictEqual(vcdiff.position, 5);
     });
     it('should throw an error if not a valid vcdiff', function () {
-      let delta = new Buffer([0x56, 0x42, 0x44, 0x0, 0x0]);
+      let delta = new Uint8Array([0x56, 0x42, 0x44, 0x0, 0x0]);
       let vcdiff = new VCDiff(delta);
       try {
         vcdiff._consumeHeader()
@@ -51,7 +53,7 @@ describe('vcdiff', function() {
       }
     });
     it('should throw an error if hdr_indicator is non-zero', function () {
-      let delta = new Buffer([0x56, 0x43, 0x44, 0x0, 0x1]);
+      let delta = new Uint8Array([0x56, 0x43, 0x44, 0x0, 0x1]);
       let vcdiff = new VCDiff(delta);
       try {
         vcdiff._consumeHeader();
@@ -64,23 +66,25 @@ describe('vcdiff', function() {
   });
   describe('#position', function() {
     it('starts at zero', function() {
-      let delta = new Buffer([0xBA, 0xEF, 0x9A, 0x15]);
+      let delta = new Uint8Array([0xBA, 0xEF, 0x9A, 0x15]);
       let vcdiff = new VCDiff(delta);
       assert.strictEqual(vcdiff.position, 0);
     })
   });
-  describe('#decodeWindw', function () {
+  describe('#_decodeWindow', function () {
     it('should return a correct target buffer', function () {
-      let source = new Buffer('test 1\n');
-      let target = new Buffer('test 2\n');
-      let hashedSource = new vcd.HashedDictionary(source);
-      let delta = vcd.vcdiffEncodeSync(target, { hashedDictionary: hashedSource });
+      let sourceString = 'test 1\n';
+      let targetString = 'test 2\n';
+      let hashedSource = new vcd.HashedDictionary(new Buffer(sourceString));
+      // get a real delta - must convert it from Buffer to Uint8Array
+      let delta = new Uint8Array(vcd.vcdiffEncodeSync(new Buffer(targetString), { hashedDictionary: hashedSource }));
+
       let deltaDeserialized, targetWindow;
-      let vcdiff = new VCDiff(delta, source, target);
+      let vcdiff = new VCDiff(delta, new Uint8Array(sourceString));
       vcdiff.position = 8;
       let constructedTarget = vcdiff._decodeWindow();
       assert.strictEqual(vcdiff.position, 22);
-      assert.strictEqual(constructedTarget.toString('ascii'), target.toString('ascii'));
+      assert.strictEqual(uintToString(constructedTarget), targetString);
     });
   });
 });
@@ -89,57 +93,40 @@ describe('Deserialize', function() {
   describe('#integer', function() {
     it('should return the correct value from a multi byte integer', function() {
       // convert VCDIFF linked integer to base10
-      let delta = new Buffer([0xBA, 0xEF, 0x9A, 0x15]); // 58,
+      let delta = new Uint8Array([0xBA, 0xEF, 0x9A, 0x15]); // 58,
       let { position, value } = Deserialize.integer(delta, 0);
       assert.strictEqual(value, 123456789);
       assert.strictEqual(position, 4);
     });
     it('should return the correct value from a single byte integer', function() {
       // convert VCDIFF linked integer to base10
-      let delta = new Buffer([43]);
+      let delta = new Uint8Array([43]);
       let { position, value } = Deserialize.integer(delta, 0);
       assert.strictEqual(value, 43);
       assert.strictEqual(position, 1);
     });
   });
-  describe('#hdrIndicator', function() {
-    it('value of 0', function() {
-      let winIndicator = Deserialize.hdrIndicator(0);
-      assert.strictEqual(winIndicator.VCD_DECOMPRESS, 0);
-      assert.strictEqual(winIndicator.VCD_CODETABLE, 0);
-    });
-    it('value of 1', function() {
-      let winIndicator = Deserialize.hdrIndicator(1);
-      assert.strictEqual(winIndicator.VCD_DECOMPRESS, 1);
-      assert.strictEqual(winIndicator.VCD_CODETABLE, 0);
-    });
-    it('value of 2', function() {
-      let winIndicator = Deserialize.hdrIndicator(2);
-      assert.strictEqual(winIndicator.VCD_DECOMPRESS, 0);
-      assert.strictEqual(winIndicator.VCD_CODETABLE, 1);
-    });
-    it('value of 3', function() {
-      let hdrIndicator = Deserialize.hdrIndicator(3);
-      assert.strictEqual(hdrIndicator.VCD_DECOMPRESS, 1);
-      assert.strictEqual(hdrIndicator.VCD_CODETABLE, 1);
-    });
-  });
   describe('#window', function () {
     it('should return a correct object with data, instructions, and addresses', function () {
-      let source = new Buffer('test 1\n');
-      let target = new Buffer('test 2\n');
-      let hashedSource = new vcd.HashedDictionary(source);
-      let delta = vcd.vcdiffEncodeSync(target, { hashedDictionary: hashedSource });
-      let deltaDeserialized, targetWindow;
+      let sourceString = 'test 1\n';
+      let targetString = 'test 2\n';
+      let hashedSource = new vcd.HashedDictionary(new Buffer(sourceString));
+      let delta = new Uint8Array(vcd.vcdiffEncodeSync(new Buffer(targetString), { hashedDictionary: hashedSource }));
 
-      deltaDeserialized = Deserialize.window(delta, 8);
+      let deltaDeserialized = Deserialize.window(delta, 8);
       assert.strictEqual(JSON.stringify(deltaDeserialized), JSON.stringify({
         targetWindowLength: 7,
         position: delta.length,
-        data: new Buffer('test 2\n'),
-        instructions: new Buffer([0x08]),
-        addresses: new Buffer([])
+        data: TypedArray.stringToUint8Array(targetString),
+        instructions: new Uint8Array([0x08]),
+        addresses: new Uint8Array([])
       }));
     });
   });
 });
+
+function uintToString(uintArray) {
+  var encodedString = String.fromCharCode.apply(null, uintArray),
+    decodedString = decodeURIComponent(escape(encodedString));
+  return decodedString;
+}
