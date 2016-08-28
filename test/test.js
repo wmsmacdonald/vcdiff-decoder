@@ -18,7 +18,7 @@ describe('vcdiffDecoder', function() {
   describe('#decodeSync', function() {
     it('should return the correct target', function() {
       let decodedTarget = vcdiffDecoder.decodeSync(delta, new Uint8Array(source));
-      let decodedString = uintToString(decodedTarget);
+      let decodedString = TypedArray.uint8ArrayToString(decodedTarget);
       // make sure decoded is same as target
       assert.strictEqual(decodedString, target.toString());
 
@@ -81,10 +81,10 @@ describe('vcdiff', function() {
 
       let deltaDeserialized, targetWindow;
       let vcdiff = new VCDiff(delta, new Uint8Array(sourceString));
-      vcdiff.position = 8;
-      let constructedTarget = vcdiff._decodeWindow();
+      vcdiff._buildTargetWindow(9);
+      let constructedTarget = vcdiff.targetWindows.uint8Arrays[0];
       assert.strictEqual(vcdiff.position, 22);
-      assert.strictEqual(uintToString(constructedTarget), targetString);
+      assert.strictEqual(TypedArray.uint8ArrayToString(constructedTarget), targetString);
     });
   });
 });
@@ -113,7 +113,7 @@ describe('Deserialize', function() {
       let hashedSource = new vcd.HashedDictionary(new Buffer(sourceString));
       let delta = new Uint8Array(vcd.vcdiffEncodeSync(new Buffer(targetString), { hashedDictionary: hashedSource }));
 
-      let deltaDeserialized = Deserialize.window(delta, 8);
+      let deltaDeserialized = Deserialize.delta(delta, 9);
       assert.strictEqual(JSON.stringify(deltaDeserialized), JSON.stringify({
         targetWindowLength: 7,
         position: delta.length,
@@ -125,8 +125,28 @@ describe('Deserialize', function() {
   });
 });
 
-function uintToString(uintArray) {
-  var encodedString = String.fromCharCode.apply(null, uintArray),
-    decodedString = decodeURIComponent(escape(encodedString));
-  return decodedString;
-}
+describe('TypedArray', function() {
+  describe('#Uint8ArrayList', function() {
+    describe('#add', function() {
+      it('should complete without error', function() {
+        let list = new TypedArray.Uint8ArrayList();
+        list.add(new Uint8Array([0, 1, 2]));
+      })
+    });
+    describe('#get', function() {
+      it('should get correct value for one array', function() {
+        let list = new TypedArray.Uint8ArrayList();
+        list.add(new Uint8Array([0, 1, 2]));
+        assert.strictEqual(list.get(1), 1);
+      });
+      it('should get correct value for two arrays', function() {
+        let list = new TypedArray.Uint8ArrayList();
+        list.add(new Uint8Array([0, 1, 2, 3]));
+        list.add(new Uint8Array([4, 5, 6, 7]));
+        for (let i = 0; i < 8; i++) {
+          assert.strictEqual(list.get(i), i);
+        }
+      })
+    });
+  });
+});
