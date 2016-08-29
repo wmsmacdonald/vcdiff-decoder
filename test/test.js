@@ -82,7 +82,7 @@ describe('vcdiff', function() {
       let deltaDeserialized, targetWindow;
       let vcdiff = new VCDiff(delta, new Uint8Array(sourceString));
       vcdiff._buildTargetWindow(9);
-      let constructedTarget = vcdiff.targetWindows.uint8Arrays[0];
+      let constructedTarget = vcdiff.targetWindows.typedArrays[0];
       assert.strictEqual(vcdiff.position, 22);
       assert.strictEqual(TypedArray.uint8ArrayToString(constructedTarget), targetString);
     });
@@ -129,20 +129,28 @@ describe('TypedArray', function() {
   describe('#Uint8ArrayList', function() {
     describe('#add', function() {
       it('should complete without error', function() {
-        let list = new TypedArray.Uint8ArrayList();
+        let list = new TypedArray.TypedArrayList();
         list.add(new Uint8Array([0, 1, 2]));
       })
     });
     describe('#get', function() {
-      it('should get correct value for one array', function() {
-        let list = new TypedArray.Uint8ArrayList();
+      it('should get correct value for one uint8 array', function() {
+        let list = new TypedArray.TypedArrayList();
         list.add(new Uint8Array([0, 1, 2]));
         assert.strictEqual(list.get(1), 1);
       });
-      it('should get correct value for two arrays', function() {
-        let list = new TypedArray.Uint8ArrayList();
+      it('should get correct value for two uin16 arrays', function() {
+        let list = new TypedArray.TypedArrayList();
         list.add(new Uint8Array([0, 1, 2, 3]));
         list.add(new Uint8Array([4, 5, 6, 7]));
+        for (let i = 0; i < 8; i++) {
+          assert.strictEqual(list.get(i), i);
+        }
+      });
+      it('should get correct value for two uint16 arrays', function() {
+        let list = new TypedArray.TypedArrayList();
+        list.add(new Uint16Array([0, 1, 2, 3]));
+        list.add(new Uint16Array([4, 5, 6, 7]));
         for (let i = 0; i < 8; i++) {
           assert.strictEqual(list.get(i), i);
         }
