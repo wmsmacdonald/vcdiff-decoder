@@ -84,7 +84,6 @@ describe('vcdiff', function() {
       vcdiff.position = 5;
       vcdiff._consumeWindow();
 
-      vcdiff._buildTargetWindow(9, TypedArray.stringToUint8Array(sourceString));
       let constructedTarget = vcdiff.targetWindows.typedArrays[0];
       assert.strictEqual(vcdiff.position, 22);
       assert.strictEqual(TypedArray.uint8ArrayToString(constructedTarget), targetString);
@@ -105,7 +104,6 @@ describe('vcdiff', function() {
       let vcdiff = new VCDiff(delta, TypedArray.stringToUint8Array(sourceString));
       vcdiff._buildTargetWindow(9, TypedArray.stringToUint8Array(sourceString));
       let constructedTarget = vcdiff.targetWindows.typedArrays[0];
-      assert.strictEqual(vcdiff.position, 22);
       assert.strictEqual(TypedArray.uint8ArrayToString(constructedTarget), targetString);
     });
   });
