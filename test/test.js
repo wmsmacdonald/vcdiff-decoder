@@ -10,17 +10,17 @@ const Deserialize = require('../lib/deserialize');
 const TypedArray = require('../lib/typed_array_util');
 
 describe('vcdiffDecoder', function() {
-  let source = 'test 1\n';
-  let target = 'test 2\n';
-  let hashedSource = new vcd.HashedDictionary(new Buffer(source));
-  let delta = new Uint8Array(vcd.vcdiffEncodeSync(new Buffer(target), { hashedDictionary: hashedSource }));
+  let sourceString = 'test 1\n';
+  let targetString = 'test 2\n';
+  let hashedSource = new vcd.HashedDictionary(new Buffer(sourceString));
+  let delta = new Uint8Array(vcd.vcdiffEncodeSync(new Buffer(targetString), { hashedDictionary: hashedSource }));
 
   describe('#decodeSync', function() {
     it('should return the correct target', function() {
-      let decodedTarget = vcdiffDecoder.decodeSync(delta, new Uint8Array(source));
+      let decodedTarget = vcdiffDecoder.decodeSync(delta, TypedArray.stringToUint8Array(sourceString));
       let decodedString = TypedArray.uint8ArrayToString(decodedTarget);
       // make sure decoded is same as target
-      assert.strictEqual(decodedString, target.toString());
+      assert.strictEqual(decodedString, targetString.toString());
 
     });
   });
@@ -71,7 +71,7 @@ describe('vcdiff', function() {
       assert.strictEqual(vcdiff.position, 0);
     })
   });
-  describe('#_decodeWindow', function () {
+  describe('#_buildTargetWindow', function () {
     it('should return a correct target buffer', function () {
       let sourceString = 'test 1\n';
       let targetString = 'test 2\n';
@@ -80,8 +80,8 @@ describe('vcdiff', function() {
       let delta = new Uint8Array(vcd.vcdiffEncodeSync(new Buffer(targetString), { hashedDictionary: hashedSource }));
 
       let deltaDeserialized, targetWindow;
-      let vcdiff = new VCDiff(delta, new Uint8Array(sourceString));
-      vcdiff._buildTargetWindow(9);
+      let vcdiff = new VCDiff(delta, TypedArray.stringToUint8Array(sourceString));
+      vcdiff._buildTargetWindow(9, TypedArray.stringToUint8Array(sourceString));
       let constructedTarget = vcdiff.targetWindows.typedArrays[0];
       assert.strictEqual(vcdiff.position, 22);
       assert.strictEqual(TypedArray.uint8ArrayToString(constructedTarget), targetString);
@@ -126,7 +126,7 @@ describe('Deserialize', function() {
 });
 
 describe('TypedArray', function() {
-  describe('#Uint8ArrayList', function() {
+  describe('#TypedArrayList', function() {
     describe('#add', function() {
       it('should complete without error', function() {
         let list = new TypedArray.TypedArrayList();
