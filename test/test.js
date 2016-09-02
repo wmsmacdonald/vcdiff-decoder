@@ -91,6 +91,9 @@ describe('vcdiff', function() {
     it('should return a correct target buffer with VCD_TARGET', function () {
 
     });
+    it('should return a correct target buffer with VCD_TARGET', function () {
+
+    });
   });
   describe('#_buildTargetWindow', function () {
     it('should return a correct target buffer', function () {
@@ -106,6 +109,19 @@ describe('vcdiff', function() {
       let constructedTarget = vcdiff.targetWindows.typedArrays[0];
       assert.strictEqual(TypedArray.uint8ArrayToString(constructedTarget), targetString);
     });
+    /*it('should return a correct target buffer with COPY instruction', function () {
+      let sourceString = 'test 1\n';
+      let targetString = 'test 2\n';
+      let hashedSource = new vcd.HashedDictionary(new Buffer(sourceString));
+      // get a real delta - must convert it from Buffer to Uint8Array
+      let delta = new Uint8Array(vcd.vcdiffEncodeSync(new Buffer(targetString), { hashedDictionary: hashedSource }));
+
+      let deltaDeserialized, targetWindow;
+      let vcdiff = new VCDiff(delta, TypedArray.stringToUint8Array(sourceString));
+      vcdiff._buildTargetWindow(9, TypedArray.stringToUint8Array(sourceString));
+      let constructedTarget = vcdiff.targetWindows.typedArrays[0];
+      assert.strictEqual(TypedArray.uint8ArrayToString(constructedTarget), targetString);
+    });*/
   });
 });
 
