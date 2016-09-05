@@ -1,27 +1,46 @@
 'use strict';
 
+const fs = require('fs');
+
 const assert = require('chai').assert;
 const vcd = require('vcdiff');
 
 const vcdiffDecoder = require('../');
 const errors = require('../lib/errors');
 const VCDiff = require('../lib/vcdiff');
-const Deserialize = require('../lib/deserialize');
 const TypedArray = require('../lib/typed_array_util');
 const instructions = require('../lib/instructions');
+const deserializeInteger = require('../lib/deserialize/integer');
+const deserializeDelta = require('../lib/deserialize/delta');
+
 
 describe('vcdiffDecoder', function() {
-  let sourceString = 'test 1\n';
-  let targetString = 'test 2\n';
-  let hashedSource = new vcd.HashedDictionary(new Buffer(sourceString));
-  let delta = new Uint8Array(vcd.vcdiffEncodeSync(new Buffer(targetString), { hashedDictionary: hashedSource }));
 
   describe('#decodeSync', function() {
     it('should return the correct target', function() {
+      let sourceString = 'test 1\n';
+      let targetString = 'test 2\n';
+      let hashedSource = new vcd.HashedDictionary(new Buffer(sourceString));
+      let delta = new Uint8Array(vcd.vcdiffEncodeSync(new Buffer(targetString), { hashedDictionary: hashedSource }));
+
       let decodedTarget = vcdiffDecoder.decodeSync(delta, TypedArray.stringToUint8Array(sourceString));
       let decodedString = TypedArray.uint8ArrayToString(decodedTarget);
       // make sure decoded is same as target
       assert.strictEqual(decodedString, targetString.toString());
+
+    });
+    it('should return the correct target for angular', function() {
+      let angular12 = fs.readFileSync(__dirname + '/fixtures/angular1.2.min.js');
+      let angular15 = fs.readFileSync(__dirname + '/fixtures/angular1.5.min.js');
+
+      let hashedSource = new vcd.HashedDictionary(angular12);
+      let delta = new Uint8Array(vcd.vcdiffEncodeSync(angular15, { hashedDictionary: hashedSource }));
+
+      let decodedTarget = vcdiffDecoder.decodeSync(delta, angular12);
+      //console.log(decodedTarget);
+      //let decodedString = TypedArray.uint8ArrayToString(decodedTarget);
+      // make sure decoded is same as target
+      //assert.strictEqual(decodedString, angular15.toString());
 
     });
   });
@@ -38,7 +57,7 @@ describe('vcdiffDecoder', function() {
 describe('vcdiff', function() {
   describe('#_consumeHeader', function() {
     it('should move position up to 5', function () {
-      let delta = new Uint8Array([0x56, 0x43, 0x44, 0x0, 0x0]);
+      let delta = new Uint8Array([0xD6, 0xc3, 0xc4, 0x0, 0x0]);
       let vcdiff = new VCDiff(delta);
       vcdiff._consumeHeader();
       assert.strictEqual(vcdiff.position, 5);
@@ -54,7 +73,7 @@ describe('vcdiff', function() {
       }
     });
     it('should throw an error if hdr_indicator is non-zero', function () {
-      let delta = new Uint8Array([0x56, 0x43, 0x44, 0x0, 0x1]);
+      let delta = new Uint8Array([0xD6, 0xc3, 0xc4, 0x0, 0x1]);
       let vcdiff = new VCDiff(delta);
       try {
         vcdiff._consumeHeader();
@@ -110,19 +129,23 @@ describe('vcdiff', function() {
       let constructedTarget = vcdiff.targetWindows.typedArrays[0];
       assert.strictEqual(TypedArray.uint8ArrayToString(constructedTarget), targetString);
     });
-    /*it('should return a correct target buffer with COPY instruction', function () {
-      let sourceString = 'test 1\n';
-      let targetString = 'test 2\n';
-      let hashedSource = new vcd.HashedDictionary(new Buffer(sourceString));
-      // get a real delta - must convert it from Buffer to Uint8Array
-      let delta = new Uint8Array(vcd.vcdiffEncodeSync(new Buffer(targetString), { hashedDictionary: hashedSource }));
+    it('should return a correct target buffer with angular files', function () {
+      let angular12 = fs.readFileSync(__dirname + '/fixtures/angular1.2.min.js');
+      let angular15 = fs.readFileSync(__dirname + '/fixtures/angular1.5.min.js');
+
+      let hashedSource = new vcd.HashedDictionary(angular12);
+      let delta = new Uint8Array(vcd.vcdiffEncodeSync(angular15, { hashedDictionary: hashedSource }));
+      console.log(delta);
+
+      let decodedTarget = vcdiffDecoder.decodeSync(delta, angular12);
 
       let deltaDeserialized, targetWindow;
-      let vcdiff = new VCDiff(delta, TypedArray.stringToUint8Array(sourceString));
-      vcdiff._buildTargetWindow(9, TypedArray.stringToUint8Array(sourceString));
+      let vcdiff = new VCDiff(delta, angular12);
+      vcdiff._consumeHeader();
+      vcdiff._buildTargetWindow(13, angular12);
       let constructedTarget = vcdiff.targetWindows.typedArrays[0];
-      assert.strictEqual(TypedArray.uint8ArrayToString(constructedTarget), targetString);
-    });*/
+      assert.strictEqual(TypedArray.uint8ArrayToString(constructedTarget), angular15.toString());
+    });
   });
 });
 
@@ -131,14 +154,14 @@ describe('Deserialize', function() {
     it('should return the correct value from a multi byte integer', function() {
       // convert VCDIFF linked integer to base10
       let delta = new Uint8Array([0xBA, 0xEF, 0x9A, 0x15]); // 58,
-      let { position, value } = Deserialize.integer(delta, 0);
+      let { position, value } = deserializeInteger(delta, 0);
       assert.strictEqual(value, 123456789);
       assert.strictEqual(position, 4);
     });
     it('should return the correct value from a single byte integer', function() {
       // convert VCDIFF linked integer to base10
       let delta = new Uint8Array([43]);
-      let { position, value } = Deserialize.integer(delta, 0);
+      let { position, value } = deserializeInteger(delta, 0);
       assert.strictEqual(value, 43);
       assert.strictEqual(position, 1);
     });
@@ -150,7 +173,7 @@ describe('Deserialize', function() {
       let hashedSource = new vcd.HashedDictionary(new Buffer(sourceString));
       let delta = new Uint8Array(vcd.vcdiffEncodeSync(new Buffer(targetString), { hashedDictionary: hashedSource }));
 
-      let deltaDeserialized = Deserialize.delta(delta, 9);
+      let deltaDeserialized = deserializeDelta(delta, 9);
       assert.strictEqual(JSON.stringify(deltaDeserialized), JSON.stringify({
         targetWindowLength: 7,
         position: delta.length,
