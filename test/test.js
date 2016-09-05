@@ -8,6 +8,7 @@ const errors = require('../lib/errors');
 const VCDiff = require('../lib/vcdiff');
 const Deserialize = require('../lib/deserialize');
 const TypedArray = require('../lib/typed_array_util');
+const instructions = require('../lib/instructions');
 
 describe('vcdiffDecoder', function() {
   let sourceString = 'test 1\n';
@@ -154,7 +155,7 @@ describe('Deserialize', function() {
         targetWindowLength: 7,
         position: delta.length,
         data: TypedArray.stringToUint8Array(targetString),
-        instructions: new Uint8Array([0x08]),
+        instructions: [new instructions.ADD(7)],
         addresses: new Uint8Array([])
       }));
     });
