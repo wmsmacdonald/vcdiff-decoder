@@ -135,7 +135,7 @@ describe('vcdiff', function() {
       let delta = new Uint8Array(vcd.vcdiffEncodeSync(angular15, { hashedDictionary: hashedSource }));
 
       let decodedTarget = vcdiffDecoder.decodeSync(delta, angular12);
-
+      //console.log(decodedTarget);
       let deltaDeserialized, targetWindow;
       let vcdiff = new VCDiff(delta, angular12);
       vcdiff._consumeHeader();
