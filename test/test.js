@@ -37,11 +37,9 @@ describe('vcdiffDecoder', function() {
       let delta = new Uint8Array(vcd.vcdiffEncodeSync(angular15, { hashedDictionary: hashedSource }));
 
       let decodedTarget = vcdiffDecoder.decodeSync(delta, angular12);
-      //console.log(decodedTarget);
       //let decodedString = TypedArray.uint8ArrayToString(decodedTarget);
       // make sure decoded is same as target
       //assert.strictEqual(decodedString, angular15.toString());
-
     });
   });
   /*describe('#decode', function() {
@@ -135,7 +133,6 @@ describe('vcdiff', function() {
 
       let hashedSource = new vcd.HashedDictionary(angular12);
       let delta = new Uint8Array(vcd.vcdiffEncodeSync(angular15, { hashedDictionary: hashedSource }));
-      console.log(delta);
 
       let decodedTarget = vcdiffDecoder.decodeSync(delta, angular12);
 
@@ -144,7 +141,8 @@ describe('vcdiff', function() {
       vcdiff._consumeHeader();
       vcdiff._buildTargetWindow(13, angular12);
       let constructedTarget = vcdiff.targetWindows.typedArrays[0];
-      assert.strictEqual(TypedArray.uint8ArrayToString(constructedTarget), angular15.toString());
+      fs.writeFileSync(__dirname + '/fixtures/angular1.5.min.js.reconstructed', Buffer.from(constructedTarget));
+      assert.isTrue(TypedArray.equal(constructedTarget, angular15));
     });
   });
 });
@@ -186,6 +184,17 @@ describe('Deserialize', function() {
 });
 
 describe('TypedArray', function() {
+  describe('#compareTypedArrays', function() {
+    it('should return false if lengths are different', function() {
+      assert.isFalse(TypedArray.equal(new Uint8Array([0x3]), new Uint8Array([0x3, 0x4])));
+    });
+    it('should return false if values are different', function() {
+      assert.isFalse(TypedArray.equal(new Uint8Array([0x3, 0x3]), new Uint8Array([0x3, 0x4])));
+    });
+    it('should return true if values are the same', function() {
+      assert.isTrue(TypedArray.equal(new Uint8Array([0x3, 0x4]), new Uint8Array([0x3, 0x4])));
+    });
+  });
   describe('#TypedArrayList', function() {
     describe('#add', function() {
       it('should complete without error', function() {
