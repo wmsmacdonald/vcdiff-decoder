@@ -12,6 +12,8 @@ const TypedArray = require('../lib/typed_array_util');
 const instructions = require('../lib/instructions');
 const deserializeInteger = require('../lib/deserialize/integer');
 const deserializeDelta = require('../lib/deserialize/delta');
+const NearCache = require('../lib/address_caches/near');
+const SameCache = require('../lib/address_caches/same');
 
 
 describe('vcdiffDecoder', function() {
@@ -226,4 +228,12 @@ describe('TypedArray', function() {
       })
     });
   });
+});
+
+describe('NearCache', function() {
+
+});
+
+describe('SameCache', function() {
+  //let sameCache = new SameCache(4);
 });
