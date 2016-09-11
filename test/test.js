@@ -15,6 +15,10 @@ const deserializeDelta = require('../lib/deserialize/delta');
 const NearCache = require('../lib/address_caches/near');
 const SameCache = require('../lib/address_caches/same');
 
+function convertToString(uint8Arr) {
+  return String.fromCharCode.apply(null, uint8Arr);
+}
+
 
 describe('vcdiffDecoder', function() {
 
@@ -31,7 +35,7 @@ describe('vcdiffDecoder', function() {
       assert.strictEqual(decodedString, targetString.toString());
 
     });
-    it('should return the correct target for angular', function() {
+    /*it('should return the correct target for angular', function() {
       let angular12 = fs.readFileSync(__dirname + '/fixtures/angular1.2.min.js');
       let angular15 = fs.readFileSync(__dirname + '/fixtures/angular1.5.min.js');
 
@@ -42,7 +46,7 @@ describe('vcdiffDecoder', function() {
       //let decodedString = TypedArray.uint8ArrayToString(decodedTarget);
       // make sure decoded is same as target
       //assert.strictEqual(decodedString, angular15.toString());
-    });
+    });*/
   });
   /*describe('#decode', function() {
     it('should return a promise that resolves to the correct target', function(done) {
@@ -135,16 +139,31 @@ describe('vcdiff', function() {
 
       let hashedSource = new vcd.HashedDictionary(angular12);
       let delta = new Uint8Array(vcd.vcdiffEncodeSync(angular15, { hashedDictionary: hashedSource }));
-
-      let decodedTarget = vcdiffDecoder.decodeSync(delta, angular12);
-      //console.log(decodedTarget);
       let deltaDeserialized, targetWindow;
       let vcdiff = new VCDiff(delta, angular12);
       vcdiff._consumeHeader();
       vcdiff._buildTargetWindow(13, angular12);
       let constructedTarget = vcdiff.targetWindows.typedArrays[0];
       fs.writeFileSync(__dirname + '/fixtures/angular1.5.min.js.reconstructed', Buffer.from(constructedTarget));
-      assert.isTrue(TypedArray.equal(constructedTarget, angular15));
+      let target = angular15.toString();
+      let constructedString = Buffer.from(constructedTarget).toString();
+      assert.strictEqual(target.length, constructedString.length);
+
+      assert.strictEqual(target, constructedString);
+    });
+    it('should return a correct target buffer with copy instructions', function () {
+      let source = new Buffer('asdfjklasdjfkjasdkjfkljasdkjfklasdklfjkasdjfjk;asdkfasdfjsdkfsdjfjaskldjfklajsdkfjklasdjfjsfjaskldjfkajsdkfjkasjdkfj');
+      let target = new Buffer('asdfjklasdjfkjasdkjfkljasdkjfklasdklfjkasdjfjk;asdkfasdfjsdkfsdjfjaskldjfklajsdkfjklasdjfjsfjaskldjfkajsdkfjkasjdkfj2');
+
+      let hashedSource = new vcd.HashedDictionary(source);
+      let delta = new Uint8Array(vcd.vcdiffEncodeSync(target, { hashedDictionary: hashedSource }));
+
+      let deltaDeserialized, targetWindow;
+      let vcdiff = new VCDiff(delta, source);
+      vcdiff._consumeHeader();
+      vcdiff._buildTargetWindow(9, source);
+      let constructedTarget = vcdiff.targetWindows.typedArrays[0];
+      assert.strictEqual(convertToString(constructedTarget), convertToString(target));
     });
   });
 });
@@ -231,9 +250,32 @@ describe('TypedArray', function() {
 });
 
 describe('NearCache', function() {
-
+  let nearCache = new NearCache(4);
+  for (let i = 0; i < 6; i++) {
+    nearCache.update(i);
+  }
+  assert.strictEqual(nearCache.get(0, 0), 4);
+  assert.strictEqual(nearCache.get(1, 0), 5);
+  assert.strictEqual(nearCache.get(2, 0), 2);
+  assert.strictEqual(nearCache.get(3, 0), 3);
 });
 
 describe('SameCache', function() {
-  //let sameCache = new SameCache(4);
+  let size = 3;
+  let sameCache = new SameCache(size);
+  for (let i = 0; i < size * 256; i++) {
+    sameCache.update(i);
+  }
+
+  for (let i = 0; i < 256; i++) {
+    assert.strictEqual(sameCache.get(0, i), i);
+  }
+
+  for (let i = 0; i < 256; i++) {
+    assert.strictEqual(sameCache.get(1, i), i + 256);
+  }
+
+  for (let i = 0; i < 256; i++) {
+    assert.strictEqual(sameCache.get(2, i), i + 512);
+  }
 });
