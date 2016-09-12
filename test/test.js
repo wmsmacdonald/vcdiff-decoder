@@ -15,11 +15,6 @@ const deserializeDelta = require('../lib/deserialize/delta');
 const NearCache = require('../lib/address_caches/near');
 const SameCache = require('../lib/address_caches/same');
 
-function convertToString(uint8Arr) {
-  return String.fromCharCode.apply(null, uint8Arr);
-}
-
-
 describe('vcdiffDecoder', function() {
 
   describe('#decodeSync', function() {
@@ -35,7 +30,7 @@ describe('vcdiffDecoder', function() {
       assert.strictEqual(decodedString, targetString.toString());
 
     });
-    /*it('should return the correct target for angular', function() {
+    it('should return the correct target for angular', function() {
       let angular12 = fs.readFileSync(__dirname + '/fixtures/angular1.2.min.js');
       let angular15 = fs.readFileSync(__dirname + '/fixtures/angular1.5.min.js');
 
@@ -43,10 +38,10 @@ describe('vcdiffDecoder', function() {
       let delta = new Uint8Array(vcd.vcdiffEncodeSync(angular15, { hashedDictionary: hashedSource }));
 
       let decodedTarget = vcdiffDecoder.decodeSync(delta, angular12);
-      //let decodedString = TypedArray.uint8ArrayToString(decodedTarget);
+      let decodedString = Buffer.from(decodedTarget).toString();
       // make sure decoded is same as target
-      //assert.strictEqual(decodedString, angular15.toString());
-    });*/
+      assert.strictEqual(decodedString, angular15.toString());
+    });
   });
   /*describe('#decode', function() {
     it('should return a promise that resolves to the correct target', function(done) {
@@ -163,7 +158,7 @@ describe('vcdiff', function() {
       vcdiff._consumeHeader();
       vcdiff._buildTargetWindow(9, source);
       let constructedTarget = vcdiff.targetWindows.typedArrays[0];
-      assert.strictEqual(convertToString(constructedTarget), convertToString(target));
+      assert.strictEqual(TypedArray.uint8ArrayToString(constructedTarget), TypedArray.uint8ArrayToString(target));
     });
   });
 });
