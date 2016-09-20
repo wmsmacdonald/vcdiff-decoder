@@ -1,6 +1,6 @@
 {
   "name": "vcdiff-decoder",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Pure JavaScript vcdiff decoder that works with binary deltas from Google's open-vcdiff",
   "main": "lib/vcdiff_decoder.js",
   "scripts": {
