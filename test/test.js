@@ -179,6 +179,16 @@ describe('Deserialize', function() {
       assert.strictEqual(value, 43);
       assert.strictEqual(position, 1);
     });
+    it('should detect Number (64bit signed float, 52bit mantissa) overflows and throw an error', function() {
+      let delta = new Uint8Array([0xFF, 0xFF, 0xFF, 0xFF, 0]);
+      let error = false;
+      try {
+        let { position, value } = deserializeInteger(delta, 0);
+      } catch(err) {
+        error = err;
+      }
+      assert.isOk(error, 'Overflow error not thrown');
+    });
   });
   describe('#window', function () {
     it('should return a correct object with data, instructions, and addresses', function () {
