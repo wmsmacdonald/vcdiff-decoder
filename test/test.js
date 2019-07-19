@@ -42,6 +42,18 @@ describe('vcdiffDecoder', function() {
       // make sure decoded is same as target
       assert.strictEqual(decodedString, angular15.toString());
     });
+    const fixtures = fs.readdirSync(__dirname + '/fixtures/xdelta');
+    fixtures.forEach(fixture => {
+      it('should properly decode Xdelta generated patches - ' + fixture, function() {
+        const dictionary = fs.readFileSync(__dirname + '/fixtures/xdelta/' + fixture + '/dictionary');
+        const delta = fs.readFileSync(__dirname + '/fixtures/xdelta/' + fixture + '/delta');
+        const target = fs.readFileSync(__dirname + '/fixtures/xdelta/' + fixture + '/target');
+
+        let decodedTarget = vcdiffDecoder.decodeSync(delta, dictionary);
+        let decodedBuffer = Buffer.from(decodedTarget);
+        assert.isTrue(decodedBuffer.equals(target));
+      });
+    });
   });
   /*describe('#decode', function() {
     it('should return a promise that resolves to the correct target', function(done) {
