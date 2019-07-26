@@ -1,5 +1,5 @@
 {
-  "name": "vcdiff-decoder",
+  "name": "@ably/vcdiff-decoder",
   "version": "0.2.1",
   "description": "Pure JavaScript vcdiff decoder that works with binary deltas from Google's open-vcdiff",
   "main": "lib/vcdiff_decoder.js",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/wmsmacdonald/vcdiff-decoder.git"
+    "url": "git+https://github.com/ably-forks/vcdiff-decoder.git"
   },
   "keywords": [
     "sdch",
@@ -18,14 +18,22 @@
     "compression"
   ],
   "author": "William MacDonald",
+  "contributors": [
+    "Tsviatko Yovtchev <tsviatko@codemerx.com> (https://codemerx.com)"
+  ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/wmsmacdonald/vcdiff-decoder/issues"
+    "url": "https://github.com/ably-forks/vcdiff-decoder/issues"
   },
+  "files": [
+    "lib"
+  ],
   "devDependencies": {
     "chai": "^3.5.0",
+    "grunt": "^1.0.4",
+    "grunt-bump": "^0.8.0",
     "mocha": "^3.0.2",
     "vcdiff": "baranov1ch/node-vcdiff"
   },
-  "homepage": "https://github.com/wmsmacdonald/vcdiff-decoder#readme"
+  "homepage": "https://github.com/ably-forks/vcdiff-decoder"
 }

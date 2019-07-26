@@ -23,3 +23,9 @@ Returns a `Buffer` object of the target.
 ### vcdiff.decode(delta, source)
 
 Same as above except returns a `Promise` that either resolves with the target `Buffer` or rejects with an error.
+
+## Release checklist
+
+1. Run `grunt release:<type>` (where `type` is "major", "minor", "patch", "prepatch")
+2. Run `grunt release:deploy`
+3. Visit [https://github.com/ably-forks/vcdiff-decoder/tags](https://github.com/ably-forks/vcdiff-decoder/tags) and draft new release for the newly created tag
