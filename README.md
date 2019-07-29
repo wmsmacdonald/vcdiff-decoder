@@ -1,4 +1,7 @@
 # vcdiff-decoder
+
+[![Build Status](https://travis-ci.org/ably-forks/vcdiff-decoder.svg?branch=master)](https://travis-ci.org/ably-forks/vcdiff-decoder)
+
 Pure JavaScript vcdiff decoder that works with binary deltas from Google's [open-vcdiff](https://github.com/google/open-vcdiff)
 
 (In Development)
