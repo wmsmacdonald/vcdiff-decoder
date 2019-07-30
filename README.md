@@ -1,12 +1,13 @@
 # vcdiff-decoder
 
 [![Build Status](https://travis-ci.org/ably-forks/vcdiff-decoder.svg?branch=master)](https://travis-ci.org/ably-forks/vcdiff-decoder)
+[![npm version](https://badge.fury.io/js/%40ably%2Fvcdiff-decoder.svg)](https://badge.fury.io/js/%40ably%2Fvcdiff-decoder)
 
 Pure JavaScript vcdiff decoder. Tested and proven working with vcdiff patch/delta files generated from Google's [open-vcdiff](https://github.com/google/open-vcdiff) and [xdelta](https://github.com/jmacd/xdelta)
 
 
 ```javascript
-const vcdiff = require('vcdiff-decoder');
+const vcdiff = require('@ably/vcdiff-decoder');
 
 let target = vcdiff.decodeSync(deltaBuffer, new Buffer('some dictionary string buffer'));
 console.log(target.toString());
