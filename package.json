@@ -4,7 +4,8 @@
   "description": "Pure JavaScript vcdiff decoder that works with binary deltas from Google's open-vcdiff",
   "main": "lib/vcdiff_decoder.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "build": "webpack"
   },
   "repository": {
     "type": "git",
@@ -33,7 +34,9 @@
     "grunt": "^1.0.4",
     "grunt-bump": "^0.8.0",
     "mocha": "^3.0.2",
-    "vcdiff": "baranov1ch/node-vcdiff"
+    "vcdiff": "baranov1ch/node-vcdiff",
+    "webpack": "^4.38.0",
+    "webpack-cli": "^3.3.6"
   },
   "homepage": "https://github.com/ably-forks/vcdiff-decoder"
 }
