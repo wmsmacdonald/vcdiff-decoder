@@ -1,8 +1,11 @@
 "use strict";
 
+const webpackConfig = require('./webpack.config');
+
 module.exports = function (grunt) {
 
 	grunt.loadNpmTasks('grunt-bump');
+	grunt.loadNpmTasks('grunt-webpack');
 
 	grunt.initConfig({
 		bump: {
@@ -17,6 +20,9 @@ module.exports = function (grunt) {
 				push: false,
 				prereleaseName: 'beta'
 			}
+		},
+		webpack: {
+			webpackConfig
 		}
 	});
 
@@ -35,10 +41,15 @@ module.exports = function (grunt) {
 		};
 	}
 
+	grunt.registerTask('build', 'webpack');
+
 	grunt.registerTask('release',
-		'Increments the version and makes a tagged commit. Run as "grunt release:type", where "type" is "major", "minor", "patch", "prepatch", etc.)',
+		'Bundles the source, increments the version and makes a tagged commit. Run as "grunt release:type", where "type" is "major", "minor", "patch", "prepatch", etc.)',
 		versionType => {
-			grunt.task.run(['bump:' + versionType]);
+			grunt.task.run([
+				'build',
+				'bump:' + versionType
+			]);
 		}
 	);
 
@@ -46,8 +57,42 @@ module.exports = function (grunt) {
 
 	grunt.registerTask('release:npm-publish', 'Deploys to npm', execExternal('npm publish . --access public'));
 
+	grunt.registerTask('release:ably-deploy',
+		'Deploys to ably CDN, assuming infrastructure repo is in same dir as vcdiff-decoder',
+		function() {
+			var infrastructurePath = '../infrastructure',
+					maxTraverseDepth = 3,
+					infrastructureFound;
+
+			var folderExists = function(relativePath) {
+				try {
+					var fileStat = fs.statSync(infrastructurePath);
+					if (fileStat.isDirectory()) {
+						return true;
+					}
+				} catch (e) { /* does not exist */ }
+			}
+
+			while (infrastructurePath.length < 'infrastructure'.length + maxTraverseDepth*3) {
+				if (infrastructureFound = folderExists(infrastructurePath)) {
+					break;
+				} else {
+					infrastructurePath = "../" + infrastructurePath;
+				}
+			}
+			if (!infrastructureFound) {
+				grunt.fatal('Infrastructure repo could not be found in any parent folders up to a folder depth of ' + maxTraverseDepth);
+			}
+			var version = grunt.file.readJSON('package.json').version,
+					cmd = 'BUNDLE_GEMFILE="' + infrastructurePath + '/Gemfile" bundle exec ' + infrastructurePath + '/bin/ably-env deploy vcdiff-decoder --version ' + version;
+			console.log('Publishing version ' + version + ' of the library to the CDN');
+			//execExternal(cmd).call(this);
+		}
+	);
+
 	grunt.registerTask('release:deploy', 'Pushes a new release to github and deploys to npm', [
 		'release:git-push',
-		'release:npm-publish'
+		'release:npm-publish',
+		'release:ably-deploy'
 	]);
 };
