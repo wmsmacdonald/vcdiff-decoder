@@ -4,7 +4,7 @@
   "description": "Pure JavaScript vcdiff decoder that works with binary deltas from Google's open-vcdiff",
   "main": "lib/vcdiff_decoder.js",
   "scripts": {
-    "test": "mocha"
+    "test": "grunt test:all"
   },
   "repository": {
     "type": "git",
@@ -32,7 +32,16 @@
     "chai": "^3.5.0",
     "grunt": "^1.0.4",
     "grunt-bump": "^0.8.0",
+    "grunt-karma": "^3.0.2",
+    "grunt-mocha-test": "^0.13.3",
     "grunt-webpack": "^3.1.3",
+    "karma": "^4.2.0",
+    "karma-browserstack-launcher": "^1.5.1",
+    "karma-firefox-launcher": "^1.1.0",
+    "karma-mocha": "^1.3.0",
+    "karma-mocha-reporter": "^2.2.5",
+    "karma-sourcemap-loader": "^0.3.7",
+    "karma-webpack": "^4.0.2",
     "mocha": "^3.0.2",
     "vcdiff": "baranov1ch/node-vcdiff",
     "webpack": "^4.38.0",
