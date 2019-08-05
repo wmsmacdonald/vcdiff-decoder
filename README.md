@@ -28,6 +28,17 @@ Returns a `Buffer` object of the target.
 
 Same as above except returns a `Promise` that either resolves with the target `Buffer` or rejects with an error.
 
+## Contributing
+
+### Testing
+To run all tests use
+
+    npm test
+
+Browser testing supported by
+
+[<img src="./resources/Browserstack-logo@2x.png" width="200px"></img>](https://www.browserstack.com/)
+
 ## Release checklist
 
 1. Run `grunt release:<type>` (where `type` is "major", "minor", "patch", "prepatch")
