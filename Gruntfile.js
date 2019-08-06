@@ -29,6 +29,31 @@ module.exports = function (grunt) {
 				output: {
 					path: path.resolve(__dirname, 'dist'),
 					library: 'vcdiffDecoder'
+				},
+				module: {
+					rules: [
+						{
+							test: /\.js$/,
+							include: [
+								path.resolve(__dirname, 'lib'),
+							],
+							use: {
+								loader: 'babel-loader',
+								options: {
+									presets: [
+										[
+											'@babel/preset-env',
+											{
+												'useBuiltIns': 'usage',
+												'corejs': 3,
+												'modules': 'commonjs'
+											}
+										]
+									]
+								}
+							}
+						}
+					]
 				}
 			},
 			'vcdiff-decoder.js': {
@@ -56,12 +81,32 @@ module.exports = function (grunt) {
 				},
 				webpack: {
 					mode: 'none',
-					devtool: 'inline-source-map'
+					devtool: 'inline-source-map',
+					module: {
+						rules: [
+							{
+								use: {
+									loader: 'babel-loader',
+									options: {
+										presets: [
+											'@babel/preset-env'
+										]
+									}
+								}
+							}
+						]
+					}
 				},
-				reporters: ['progress', 'mocha'],
+				client: {
+					mocha: {
+						timeout: 10000
+					}
+				},
+				captureTimeout: 120000,
 				singleRun: true
 			},
 			local: {
+				reporters: ['progress', 'mocha'],
 				browsers: ['Firefox'],
 			},
 			remote: {
@@ -69,6 +114,7 @@ module.exports = function (grunt) {
 					username: process.env.BROWSERSTACK_USERNAME,
 					accessKey: process.env.BROWSERSTACK_ACCESSKEY
 				},
+				reporters: ['dots', 'BrowserStack'],
 				customLaunchers: {
 					// BrowserStack launchers. List here: https://www.browserstack.com/list-of-browsers-and-platforms?product=automate
 					// To get actual values run `curl -u "BROWSERSTACK_USERNAME:BROWSERSTACK_ACCESSKEY" https://api.browserstack.com/automate/browsers.json | json_pp`
@@ -76,9 +122,7 @@ module.exports = function (grunt) {
 					bs_chrome_sierra: { base: 'BrowserStack', browser: 'chrome', browser_version: '66.0', os: 'OS X', os_version: 'Sierra' },
 					bs_ie11_win10: { base: 'BrowserStack', browser: 'ie', browser_version: '11.0', os: 'Windows', os_version: '10' },
 					bs_ie10_win81: { base: 'BrowserStack', browser: 'ie', browser_version: '10.0', os: 'Windows', os_version: '8' },
-					bs_ie9_win7: { base: 'BrowserStack', browser: 'ie', browser_version: '9.0', os: 'Windows', os_version: '7' },
 					bs_ie16_win10: { base: 'BrowserStack', browser: 'edge', browser_version: '16.0', os: 'Windows', os_version: '10' },
-					bs_ie8_win7: { base: 'BrowserStack', browser: 'ie', browser_version: '8.0', os: 'Windows', os_version: '7' },
 					bs_safari_11_iOS: { base: 'BrowserStack', browser: 'Mobile Safari', os: 'ios', os_version: '11.0', real_devices: ['iPhone SE'] },
 					bs_safari_high_sierra: { base: 'BrowserStack', browser: 'Safari', browser_version: '11.1', os: 'OS X', os_version: 'High Sierra' },
 					bs_android_6: { base: 'BrowserStack', browser: 'android', os: 'android', os_version: '6.0', device: 'Google Nexus 6', real_mobile: true }
@@ -88,9 +132,7 @@ module.exports = function (grunt) {
 					'bs_chrome_sierra',
 					'bs_ie11_win10',
 					'bs_ie10_win81',
-					'bs_ie9_win7',
 					'bs_ie16_win10',
-					'bs_ie8_win7',
 					'bs_safari_11_iOS',
 					'bs_safari_high_sierra',
 					'bs_android_6'
