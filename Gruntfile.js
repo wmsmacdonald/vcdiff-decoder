@@ -15,7 +15,7 @@ module.exports = function (grunt) {
 				files: ['package.json'],
 				commit: true,
 				commitMessage: 'Release version %VERSION%',
-				commitFiles: ['package.json'],
+				commitFiles: ['package.json', 'dist/vcdiff-decoder.js', 'dist/vcdiff-decoder.min.js'],
 				createTag: true,
 				tagName: '%VERSION%',
 				tagMessage: 'Version %VERSION%',
@@ -223,7 +223,7 @@ module.exports = function (grunt) {
 			var version = grunt.file.readJSON('package.json').version,
 					cmd = 'BUNDLE_GEMFILE="' + infrastructurePath + '/Gemfile" bundle exec ' + infrastructurePath + '/bin/ably-env deploy vcdiff-decoder --version ' + version;
 			console.log('Publishing version ' + version + ' of the library to the CDN');
-			//execExternal(cmd).call(this);
+			execExternal(cmd).call(this);
 		}
 	);
 

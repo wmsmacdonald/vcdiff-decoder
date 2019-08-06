@@ -1,6 +1,5 @@
 node_modules
 .idea
 npm-debug.log
-dist
 local.log
 browserstack.err
