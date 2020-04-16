@@ -15,7 +15,7 @@ module.exports = function (grunt) {
 				files: ['package.json'],
 				commit: true,
 				commitMessage: 'Release version %VERSION%',
-				commitFiles: ['package.json', 'dist/vcdiff-decoder.js', 'dist/vcdiff-decoder.min.js'],
+				commitFiles: ['package.json'],
 				createTag: true,
 				tagName: '%VERSION%',
 				tagMessage: 'Version %VERSION%',
