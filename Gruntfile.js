@@ -99,7 +99,7 @@ module.exports = function (grunt) {
 				},
 				client: {
 					mocha: {
-						timeout: 10000
+						timeout: 30000
 					}
 				},
 				captureTimeout: 120000,
