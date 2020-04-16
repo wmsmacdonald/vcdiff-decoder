@@ -53,6 +53,6 @@ for which you will need to configure environment variables for `BROWSERSTACK_USE
 
 ## Release checklist
 
-1. Run `grunt release:<type>` (where `type` is "major", "minor", "patch", "prepatch")
-2. Run `grunt release:deploy`
+1. Run `npm run grunt -- release:patch` (or "major", "minor" or "prepatch" as appropriate - see [grunt-bump Usage Examples](https://github.com/vojtajina/grunt-bump#usage-examples))
+2. Run `npm run grunt -- release:deploy`
 3. Visit [tags](https://github.com/ably-forks/vcdiff-decoder/tags) and draft new release for the newly created tag
