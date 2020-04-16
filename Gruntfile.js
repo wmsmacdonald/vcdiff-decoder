@@ -103,6 +103,7 @@ module.exports = function (grunt) {
 					}
 				},
 				captureTimeout: 120000,
+				concurrency: 2,
 				singleRun: true
 			},
 			local: {
