@@ -190,13 +190,4 @@ module.exports = function (grunt) {
 			]);
 		}
 	);
-
-	grunt.registerTask('release:git-push', 'Pushes to git', execExternal('git push origin master --follow-tags'));
-
-	grunt.registerTask('release:npm-publish', 'Deploys to npm', execExternal('npm publish . --access public'));
-
-	grunt.registerTask('release:deploy', 'Pushes a new release to github and deploys to npm', [
-		'release:git-push',
-		'release:npm-publish',
-	]);
 };

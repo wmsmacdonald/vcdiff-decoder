@@ -69,8 +69,11 @@ Browser testing supported by
 
 for which you will need to configure environment variables for `BROWSERSTACK_USERNAME` and `BROWSERSTACK_ACCESSKEY`.
 
-## Release checklist
+## Release Procedure
+
+On the `master` branch:
 
 1. Run `npm run grunt -- release:patch` (or "major", "minor" or "prepatch" as appropriate - see [grunt-bump Usage Examples](https://github.com/vojtajina/grunt-bump#usage-examples))
-2. Run `npm run grunt -- release:deploy`
-3. Visit [tags](https://github.com/ably-forks/vcdiff-decoder/tags) and draft new release for the newly created tag
+2. Run `git push origin master --follow-tags`
+3. Run `npm publish . --access public` ([this package](https://www.npmjs.com/package/@ably/vcdiff-decoder) is configured to require that [2FA](https://docs.npmjs.com/configuring-two-factor-authentication) is used by publishers)
+4. Visit [tags](https://github.com/ably-forks/vcdiff-decoder/tags) and draft new release for the newly created tag
