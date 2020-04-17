@@ -39,6 +39,24 @@ The difference is that this function returns a [`Promise`](https://developer.moz
 
 ## Contributing
 
+### Requirements
+
+The `vcdiff` dev dependency of this project, used for testing, fails to build against [Node.js 9](https://nodejs.org/download/release/latest-v9.x/) and newer.
+For this reason, until [#3](https://github.com/ably-forks/vcdiff-decoder/issues/3) has been addressed, the tests must be run against an environment with [Node.js 8](https://nodejs.org/download/release/latest-v8.x/) installed.
+
+At the time of writing this means:
+
+    vcdiff-decoder % node --version
+    v8.17.0
+    vcdiff-decoder % npm --version
+    6.13.4
+
+For those who use
+[ASDF](https://github.com/asdf-vm/asdf)
+or compatible tooling to manage their Node.js runtime versions, we have included a
+[`.tool-versions`](.tool-versions)
+file.
+
 ### Testing
 
 To run all tests use
