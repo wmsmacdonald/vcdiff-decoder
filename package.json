@@ -1,6 +1,6 @@
 {
   "name": "@ably/vcdiff-decoder",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Pure JavaScript vcdiff decoder that works with binary deltas from Google's open-vcdiff",
   "main": "lib/vcdiff_decoder.js",
   "scripts": {
