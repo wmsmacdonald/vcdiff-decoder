@@ -17,14 +17,14 @@ const SameCache = require('../lib/address_caches/same');
 
 describe('vcdiffDecoder', function() {
 
-  describe('#decodeSync', function() {
+  describe('#decode', function() {
     it('should return the correct target', function() {
       let sourceString = 'test 1\n';
       let targetString = 'test 2\n';
       let hashedSource = new vcd.HashedDictionary(new Buffer(sourceString));
       let delta = new Uint8Array(vcd.vcdiffEncodeSync(new Buffer(targetString), { hashedDictionary: hashedSource }));
 
-      let decodedTarget = vcdiffDecoder.decodeSync(delta, TypedArray.stringToUint8Array(sourceString));
+      let decodedTarget = vcdiffDecoder.decode(delta, TypedArray.stringToUint8Array(sourceString));
       let decodedString = TypedArray.uint8ArrayToString(decodedTarget);
       // make sure decoded is same as target
       assert.strictEqual(decodedString, targetString.toString());
@@ -37,7 +37,7 @@ describe('vcdiffDecoder', function() {
       let hashedSource = new vcd.HashedDictionary(angular12);
       let delta = new Uint8Array(vcd.vcdiffEncodeSync(angular15, { hashedDictionary: hashedSource }));
 
-      let decodedTarget = vcdiffDecoder.decodeSync(delta, angular12);
+      let decodedTarget = vcdiffDecoder.decode(delta, angular12);
       let decodedString = Buffer.from(decodedTarget).toString();
       // make sure decoded is same as target
       assert.strictEqual(decodedString, angular15.toString());
@@ -49,20 +49,12 @@ describe('vcdiffDecoder', function() {
         const delta = fs.readFileSync(__dirname + '/fixtures/xdelta/' + fixture + '/delta');
         const target = fs.readFileSync(__dirname + '/fixtures/xdelta/' + fixture + '/target');
 
-        let decodedTarget = vcdiffDecoder.decodeSync(delta, dictionary);
+        let decodedTarget = vcdiffDecoder.decode(delta, dictionary);
         let decodedBuffer = Buffer.from(decodedTarget);
         assert.isTrue(decodedBuffer.equals(target));
       });
     });
   });
-  /*describe('#decode', function() {
-    it('should return a promise that resolves to the correct target', function(done) {
-      vcdiffDecoder.decode(delta, source).then((err, decodedTarget) => {
-        assert.strictEqual(decodedTarget.toString(), target.toString());
-        done();
-      });
-    });
-  });*/
 });
 
 describe('vcdiff', function() {

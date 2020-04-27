@@ -3,7 +3,7 @@
 const assert = require('chai').assert;
 
 describe('vcdiffDecoder', function() {
-	describe('#decodeSync', function() {
+	describe('#decode', function() {
 		for (var i = 1; i <= 4; i++) {
 			var fixture = i;
 			it('should properly decode Xdelta generated patches - ' + fixture, function(done) {
@@ -14,9 +14,9 @@ describe('vcdiffDecoder', function() {
 						return;
 					}
 
-					let decodedTarget = vcdiffDecoder.decodeSync(delta, dictionary);
+					let decodedTarget = vcdiffDecoder.decode(delta, dictionary);
 					let decodedBuffer = Buffer.from(decodedTarget);
-					assert.isTrue(decodedBuffer.equals(Buffer.from(target)), 'The result from decodeSync() should match the target.');
+					assert.isTrue(decodedBuffer.equals(Buffer.from(target)), 'The result from decode() should match the target.');
 					done();
 				});
 			});

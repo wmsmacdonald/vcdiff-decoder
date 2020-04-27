@@ -15,27 +15,20 @@ and [Joshua MacDonald](https://github.com/jmacd)'s [xdelta](https://github.com/j
 ```javascript
 const vcdiff = require('@ably/vcdiff-decoder');
 
-let target = vcdiff.decodeSync(deltaBuffer, new Buffer('some dictionary string buffer'));
+let target = vcdiff.decode(deltaBuffer, new Buffer('some dictionary string buffer'));
 console.log(target.toString());
 ```
 
 ## Exported Functions
 
-### `decodeSync(delta, source)`
+### `decode(delta, source)`
 
 Synchronous decode. Parameters:
 
-* `delta`: [`Buffer`](https://nodejs.org/api/buffer.html) - the binary Vcdiff format encoding of the patch/diff information needed to transform `source` to the returned target
-* `source`: [`Buffer`](https://nodejs.org/api/buffer.html) - the group of bytes to transform to the returned target using by applying `delta`
+* `delta`: [`Uint8Array`](https://nodejs.org/api/buffer.html) - the binary Vcdiff format encoding of the patch/diff information needed to transform `source` to the returned target
+* `source`: [`Uint8Array`](https://nodejs.org/api/buffer.html) - the group of bytes to transform to the returned target using by applying `delta`
 
-Returns a `Buffer`, the 'target', being the result of applying `delta` to `source`.
-
-### `decode(delta, source)`
-
-Asynchronous decode.
-
-The input parameters for this function are the same as for the synchronous function `decodeSync(delta, source)`.
-The difference is that this function returns a [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) that either resolves with the target [`Buffer`](https://nodejs.org/api/buffer.html) or rejects with an error.
+Returns a `Uint8Array`, the 'target', being the result of applying `delta` to `source`.
 
 ## Contributing
 
