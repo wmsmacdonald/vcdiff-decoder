@@ -148,21 +148,6 @@ module.exports = function (grunt) {
 		}
 	});
 
-	function execExternal(cmd) {
-		return function() {
-			var done = this.async();
-			grunt.log.ok("Executing " + cmd);
-			require('child_process').exec(cmd, function(err, stdout, stderr) {
-				if (err) {
-					grunt.fatal('Error executing "' + cmd + '": ' + stderr);
-				}
-				console.log(stdout);
-				stderr && console.error(stderr);
-				done();
-			});
-		};
-	}
-
 	grunt.registerTask('build', 'webpack');
 
 	grunt.registerTask('test:all', ['test', 'test:browser:remote']);
@@ -216,9 +201,23 @@ module.exports = function (grunt) {
 
 			var version = grunt.file.readJSON('package.json').version,
 					cmd = 'BUNDLE_GEMFILE="' + infrastructurePath + '/Gemfile" bundle exec ' + infrastructurePath + '/bin/ably-env deploy vcdiff-decoder --version ' + version;
-			grunt.verbose.write('Publishing version ' + version + ' of the library to the CDN...');
-			execExternal(cmd).call(this);
-			grunt.log.ok('Version ' + version + ' published to the CDN.');
+			grunt.verbose.writeln('Publishing version ' + version + ' of the library to the CDN...');
+
+			let done = this.async();
+			require('child_process').exec(cmd, function(error, stdout, stderr) {
+				if (null === error) {
+					// Success
+					grunt.log.ok('Version ' + version + ' published to the CDN.');
+					done();
+					return;
+				}
+
+				// Failure
+				grunt.log.error(error);
+				grunt.log.writeln('\n\nexec stdout:\n' + stdout);
+				grunt.log.writeln('\n\nexec stderr:\n' + stderr);
+				done(false);
+			});
 		}
 	);
 
