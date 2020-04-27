@@ -1,28 +1,28 @@
 {
   "name": "@ably/vcdiff-decoder",
   "version": "1.0.2",
-  "description": "Pure JavaScript vcdiff decoder that works with binary deltas from Google's open-vcdiff",
+  "description": "Pure JavaScript Vcdiff decoder that works with binary deltas from Google's open-vcdiff",
+  "license": "Apache-2.0",
+  "homepage": "https://ably.io/",
   "main": "lib/vcdiff_decoder.js",
   "scripts": {
-    "grunt": "./node_modules/grunt-cli/bin/grunt",
-    "test": "./node_modules/grunt-cli/bin/grunt test:all"
+    "grunt": "grunt",
+    "test": "grunt test:all"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ably-forks/vcdiff-decoder.git"
-  },
+  "repository": "ably-forks/vcdiff-decoder.git",
   "keywords": [
-    "sdch",
     "delta",
-    "cache",
     "decoding",
-    "compression"
+    "decoder",
+    "compression",
+    "Vcdiff",
+    "diff"
   ],
-  "author": "William MacDonald",
+  "author": "Ably Real-time Ltd <support@ably.io>",
   "contributors": [
+    "William MacDonald",
     "Tsviatko Yovtchev <tsviatko@codemerx.com> (https://codemerx.com)"
   ],
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/ably-forks/vcdiff-decoder/issues"
   },
@@ -52,6 +52,5 @@
     "vcdiff": "baranov1ch/node-vcdiff",
     "webpack": "^4.42.1",
     "webpack-cli": "^3.3.11"
-  },
-  "homepage": "https://github.com/ably-forks/vcdiff-decoder"
+  }
 }
