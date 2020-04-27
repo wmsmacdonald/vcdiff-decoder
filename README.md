@@ -50,9 +50,17 @@ or compatible tooling to manage their Node.js runtime versions, we have included
 [`.tool-versions`](.tool-versions)
 file.
 
+### Building
+
+You can trigger a build using Webpack with:
+
+    npm run grunt -- build
+
+which creates `vcdiff-decoder.js` and `vcdiff-decoder.min.js` in a folder called `dist`.
+
 ### Testing
 
-To run all tests use
+To run all tests use:
 
     npm test
 
