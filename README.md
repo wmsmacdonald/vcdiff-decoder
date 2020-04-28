@@ -56,7 +56,7 @@ You can trigger a build using Webpack with:
 
     npm run grunt -- build
 
-which creates `vcdiff-decoder.js` and `vcdiff-decoder.min.js` in a folder called `dist`.
+which creates `vcdiff-decoder.js` and `vcdiff-decoder.min.js` in the `dist` folder.
 
 ### Testing
 

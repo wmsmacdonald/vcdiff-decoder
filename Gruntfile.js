@@ -248,8 +248,7 @@ module.exports = function (grunt) {
 				'dist/vcdiff-decoder.min.js'
 			];
 
-			// Using --force so the /dist folder can remain in .gitignore
-			var cmd = 'git add --force -A ' + generatedFiles.join(' ');
+			var cmd = 'git add -A ' + generatedFiles.join(' ');
 
 			_exec(this.async(), cmd,  'Add generated files to Git staging area');
 		}
