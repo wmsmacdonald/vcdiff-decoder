@@ -15,8 +15,8 @@ module.exports = function (grunt) {
 			options: {
 				files: ['package.json'],
 				commit: true,
-				commitMessage: 'Release version %VERSION%',
-				commitFiles: ['package.json'],
+				commitMessage: 'Regenerate and release version %VERSION%',
+				commitFiles: [], // see task release:git-add-generated
 				createTag: true,
 				tagName: '%VERSION%',
 				tagMessage: 'Version %VERSION%',
@@ -221,12 +221,50 @@ module.exports = function (grunt) {
 		}
 	);
 
+	/**
+	 * We need this task for a couple of reasons.
+	 * 
+	 * First, and most critical, is the fact that grunt-bump's bump-commit fails if commitFiles are not in the root - i.e.:
+	 *   Running "bump::commit-only" (bump) task
+	 *   Fatal error: Can not create the commit:
+     *   error: pathspec 'dist/vcdiff-decoder.js' did not match any file(s) known to git
+     *   error: pathspec 'dist/vcdiff-decoder.min.js' did not match any file(s) known to git
+	 * 
+	 * Secondly, grunt-bump adds files atomically in the git commit command, meaning that we cannot force it to
+	 * add files that would otherwise have been ignored because they're covered by our .gitignore file. In our case
+	 * this is the /dist folder.
+	 */
+	grunt.registerTask('release:git-add-generated',
+		'Adds generated files to the git staging area', function() {
+			var done = this.async();
+			var generatedFiles = [
+				'package.json',
+				'dist/vcdiff-decoder.js',
+				'dist/vcdiff-decoder.min.js'
+			];
+
+			// Using --force so the /dist folder can remain in .gitignore
+			var cmd = 'git add --force -A ' + generatedFiles.join(' ');
+			grunt.log.writeln('Executing "' + cmd + '"...');
+
+			require('child_process').exec(cmd, function(err, stdout, stderr) {
+				if (err) {
+					grunt.log.error('git add . -A failed with:\n' + err + '\n\nstderr:\n' + stderr + '\n\nstdout:\n' + stdout);
+					done(false);
+				}
+				done();
+			});
+		}
+	);
+
 	grunt.registerTask('release',
-		'Bundles the source, increments the version and makes a tagged commit. Run as "grunt release:type", where "type" is "major", "minor", "patch", "prepatch", etc.)',
+		'Increments the version, regenerates from source (build / bundle), then makes a tagged commit. Run as "grunt release:type", where "type" is "major", "minor", "patch", "prepatch", etc.)',
 		versionType => {
 			grunt.task.run([
+				'bump-only:' + versionType,
 				'build',
-				'bump:' + versionType
+				'release:git-add-generated',
+				'bump-commit'
 			]);
 		}
 	);
