@@ -167,6 +167,26 @@ module.exports = function (grunt) {
 		}
 	);
 
+	function _exec(done, cmd, operationDescription) {
+		let execCallback = function(error, stdout, stderr) {
+			if (null === error) {
+				// Success
+				grunt.log.ok(operationDescription);
+				done();
+				return;
+			}
+	
+			// Failure
+			grunt.log.error('Failed to ' + operationDescription + ':\n' + error);
+			grunt.log.writeln('\n\nexec stdout:\n' + stdout);
+			grunt.log.writeln('\n\nexec stderr:\n' + stderr);
+			done(false);	
+		};
+
+		grunt.log.writeln(operationDescription + '...');
+		require('child_process').exec(cmd, execCallback);
+	}
+
 	grunt.registerTask('publish-cdn',
 		'Deploys to the Ably CDN. Requires infrastructure repository relative to here.',
 		function() {
@@ -203,21 +223,7 @@ module.exports = function (grunt) {
 					cmd = 'BUNDLE_GEMFILE="' + infrastructurePath + '/Gemfile" bundle exec ' + infrastructurePath + '/bin/ably-env deploy vcdiff-decoder --version ' + version;
 			grunt.verbose.writeln('Publishing version ' + version + ' of the library to the CDN...');
 
-			let done = this.async();
-			require('child_process').exec(cmd, function(error, stdout, stderr) {
-				if (null === error) {
-					// Success
-					grunt.log.ok('Version ' + version + ' published to the CDN.');
-					done();
-					return;
-				}
-
-				// Failure
-				grunt.log.error(error);
-				grunt.log.writeln('\n\nexec stdout:\n' + stdout);
-				grunt.log.writeln('\n\nexec stderr:\n' + stderr);
-				done(false);
-			});
+			_exec(this.async(), cmd,  'Publish version ' + version + ' to CDN');
 		}
 	);
 
@@ -236,7 +242,6 @@ module.exports = function (grunt) {
 	 */
 	grunt.registerTask('release:git-add-generated',
 		'Adds generated files to the git staging area', function() {
-			var done = this.async();
 			var generatedFiles = [
 				'package.json',
 				'dist/vcdiff-decoder.js',
@@ -245,15 +250,8 @@ module.exports = function (grunt) {
 
 			// Using --force so the /dist folder can remain in .gitignore
 			var cmd = 'git add --force -A ' + generatedFiles.join(' ');
-			grunt.log.writeln('Executing "' + cmd + '"...');
 
-			require('child_process').exec(cmd, function(err, stdout, stderr) {
-				if (err) {
-					grunt.log.error('git add . -A failed with:\n' + err + '\n\nstderr:\n' + stderr + '\n\nstdout:\n' + stdout);
-					done(false);
-				}
-				done();
-			});
+			_exec(this.async(), cmd,  'Add generated files to Git staging area');
 		}
 	);
 
