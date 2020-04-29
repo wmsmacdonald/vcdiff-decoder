@@ -10,6 +10,34 @@ Tested and proven with Vcdiff patch/delta files generated from
 [Google](https://github.com/google)'s [open-vcdiff](https://github.com/google/open-vcdiff)
 and [Joshua MacDonald](https://github.com/jmacd)'s [xdelta](https://github.com/jmacd/xdelta).
 
+## Installation from npm for Node.js
+
+    npm install @ably/vcdiff-decoder
+
+and require as:
+
+```javascript
+var Ably = require('@ably/vcdiff-decoder');
+```
+
+## Script include for Web Browsers
+
+Include the library in your HTML from our CDN:
+
+```html
+<script src="https://cdn.ably.io/lib/vcdiff-decoder.min-1.js"></script>
+```
+
+We follow [Semantic Versioning](http://semver.org/). To lock into a major or minor version of the client library, you can specify a specific version number - for example:
+
+* `https://cdn.ably.io/lib/vcdiff-decoder.min-1.js` for latest `1.*` version
+* `https://cdn.ably.io/lib/vcdiff-decoder.min-1.0.js` for latest `v1.0.*` version
+* `https://cdn.ably.io/lib/vcdiff-decoder.min-1.0.3.js` for version `1.0.3` explicitly
+
+You can load the non-minified version by omitting `min-` from the URL, for example `https://cdn.ably.io/lib/vcdiff-decoder-1.js`.
+
+See [tagged releases](https://github.com/ably-forks/vcdiff-decoder/releases) for available versions.
+
 ## Usage
 
 ```javascript
