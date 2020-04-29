@@ -42,9 +42,7 @@ See [tagged releases](https://github.com/ably-forks/vcdiff-decoder/releases) for
 
 ```javascript
 const vcdiff = require('@ably/vcdiff-decoder');
-
-let target = vcdiff.decode(deltaBuffer, new Buffer('some dictionary string buffer'));
-console.log(target.toString());
+let target = vcdiff.decode(delta, source);
 ```
 
 ## Exported Functions
