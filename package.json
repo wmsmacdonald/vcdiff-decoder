@@ -27,7 +27,8 @@
     "url": "https://github.com/ably-forks/vcdiff-decoder/issues"
   },
   "files": [
-    "lib"
+    "lib",
+    "dist"
   ],
   "devDependencies": {
     "@babel/core": "^7.9.0",
