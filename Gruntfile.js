@@ -221,7 +221,6 @@ module.exports = function (grunt) {
 
 			var version = grunt.file.readJSON('package.json').version,
 					cmd = 'BUNDLE_GEMFILE="' + infrastructurePath + '/Gemfile" bundle exec ' + infrastructurePath + '/bin/ably-env deploy vcdiff-decoder --version ' + version;
-			grunt.verbose.writeln('Publishing version ' + version + ' of the library to the CDN...');
 
 			_exec(this.async(), cmd,  'Publish version ' + version + ' to CDN');
 		}
