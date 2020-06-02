@@ -227,17 +227,13 @@ module.exports = function (grunt) {
 	);
 
 	/**
-	 * We need this task for a couple of reasons.
+	 * We need this task because...
 	 * 
-	 * First, and most critical, is the fact that grunt-bump's bump-commit fails if commitFiles are not in the root - i.e.:
+	 * grunt-bump's bump-commit fails if commitFiles are not in the root - i.e.:
 	 *   Running "bump::commit-only" (bump) task
 	 *   Fatal error: Can not create the commit:
      *   error: pathspec 'dist/vcdiff-decoder.js' did not match any file(s) known to git
      *   error: pathspec 'dist/vcdiff-decoder.min.js' did not match any file(s) known to git
-	 * 
-	 * Secondly, grunt-bump adds files atomically in the git commit command, meaning that we cannot force it to
-	 * add files that would otherwise have been ignored because they're covered by our .gitignore file. In our case
-	 * this is the /dist folder.
 	 */
 	grunt.registerTask('release:git-add-generated',
 		'Adds generated files to the git staging area', function() {
