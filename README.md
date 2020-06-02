@@ -17,7 +17,7 @@ and [Joshua MacDonald](https://github.com/jmacd)'s [xdelta](https://github.com/j
 and require as:
 
 ```javascript
-var Ably = require('@ably/vcdiff-decoder');
+const vcdiff = require('@ably/vcdiff-decoder');
 ```
 
 ## Script include for Web Browsers
