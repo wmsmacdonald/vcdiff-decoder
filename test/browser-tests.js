@@ -48,7 +48,7 @@ function getXdeltaFixtureFiles(fixture, callback) {
 
 function getXdeltaFixtureFile(fixture, file, callback) {
 	var request = new XMLHttpRequest();
-	request.open("GET", 'https://raw.githubusercontent.com/ably-forks/vcdiff-decoder/master/test/fixtures/xdelta/' + fixture + '/' + file);
+	request.open("GET", 'https://raw.githubusercontent.com/ably-forks/vcdiff-decoder/main/test/fixtures/xdelta/' + fixture + '/' + file);
 	request.responseType = "arraybuffer";
 	request.onreadystatechange = function() {
 		if(request.readyState === 4) {
