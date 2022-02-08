@@ -17,7 +17,7 @@ and [Joshua MacDonald](https://github.com/jmacd)'s [xdelta](https://github.com/j
 and require as:
 
 ```javascript
-const vcdiff = require('@ably/vcdiff-decoder');
+const vcdiffPlugin = require('@ably/vcdiff-decoder');
 ```
 
 ## Script include for Web Browsers
@@ -40,9 +40,25 @@ See [tagged releases](https://github.com/ably-forks/vcdiff-decoder/releases) for
 
 ## Usage
 
+The following code sample shows how to use Vcdiff with Ably:
+
 ```javascript
-const vcdiff = require('@ably/vcdiff-decoder');
-let target = vcdiff.decode(delta, source);
+const Ably = require('ably');
+const vcdiffPlugin = require('@ably/vcdiff-decoder');
+
+const realtime = new Ably.Realtime({
+    key: 'YOUR_ABLY_KEY',
+    plugins: {
+        vcdiff: vcdiffPlugin
+    },
+    log: { level: 4 } // optional
+});
+
+const channel = realtime.channels.get('your-ably-channel', {
+    delta: 'vcdiff'
+})
+
+channel.subscribe(msg => console.log("Received message: ", msg));
 ```
 
 ## Exported Functions
